@@ -1,0 +1,94 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json",
+  "manifest_version": "0.4",
+  "name": "dataclean-mcp",
+  "display_name": "DataClean",
+  "version": "0.1.0",
+  "description": "Cleans CSV, Excel and JSON tables deterministically: European/US numbers, day/month dates, NUL bytes, mojibake, phones, emails, dedupe and schema validation.",
+  "long_description": "Data hygiene for AI agents. Profiles a table (types, number locale, date order, nulls, duplicates, problems), returns a clean typed copy as CSV, JSON or .xlsx, validates rows against a schema and normalizes lists of values. Ambiguous values are flagged, never guessed. Pay per call with KeyFlint credits.",
+  "author": {
+    "name": "ArceeDev",
+    "url": "https://mcp.keyflint.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArceeDev/dataclean-mcp"
+  },
+  "homepage": "https://mcp.keyflint.dev",
+  "support": "https://github.com/ArceeDev/dataclean-mcp/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "uv",
+    "entry_point": "src/dataclean_mcp/__main__.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "--no-dev",
+        "--quiet",
+        "dataclean-mcp"
+      ],
+      "env": {
+        "KEYFLINT_LICENSE": "${user_config.license_key}"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "profile_table",
+      "description": "Profile a table: real column types, number locale, date order, nulls, duplicates and problems, plus a suggested schema."
+    },
+    {
+      "name": "clean_table",
+      "description": "Return a clean, typed copy of a table (CSV, TSV, JSON, JSONL or .xlsx) with a report of every change."
+    },
+    {
+      "name": "validate_schema",
+      "description": "Check every row against a schema: types, required, unique, min/max, enum, pattern."
+    },
+    {
+      "name": "normalize_values",
+      "description": "Normalize a list of numbers, dates, phones, emails, IBANs or booleans."
+    },
+    {
+      "name": "pricing",
+      "description": "Credit price of each tool and where to buy credits. Free."
+    },
+    {
+      "name": "credits_balance",
+      "description": "Remaining credits on your KeyFlint license. Free."
+    }
+  ],
+  "keywords": [
+    "csv",
+    "excel",
+    "xlsx",
+    "data-cleaning",
+    "data-quality",
+    "schema",
+    "etl",
+    "keyflint"
+  ],
+  "license": "BUSL-1.1",
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "user_config": {
+    "license_key": {
+      "type": "string",
+      "title": "KeyFlint license",
+      "description": "Your license key (starts with LIC-). You get it when you buy credits at mcp.keyflint.dev; one license works for every KeyFlint MCP.",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}

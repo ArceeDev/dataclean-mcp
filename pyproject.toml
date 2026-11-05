@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dataclean-mcp"
+version = "0.1.0"
+description = "MCP server that deterministically cleans CSV, Excel and JSON tables for AI agents: European and US numbers, day/month dates, NUL bytes, mojibake, phones, emails, IBAN, dedupe and schema validation. Billed per call with KeyFlint credits."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "BUSL-1.1"
+license-files = ["LICENSE"]
+authors = [{ name = "ArceeDev" }]
+keywords = ["mcp", "csv", "excel", "xlsx", "data-cleaning", "data-quality", "etl", "schema-validation", "type-inference", "llm", "ai-agents"]
+dependencies = [
+    "mcp>=2.0",
+    "keyflint-verify[fast]>=1.2.0",
+    "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.scripts]
+dataclean-mcp = "dataclean_mcp.server:main"
+
+[project.urls]
+Homepage = "https://mcp.keyflint.dev"
+Source = "https://github.com/ArceeDev/dataclean-mcp"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["src", "tests"]
