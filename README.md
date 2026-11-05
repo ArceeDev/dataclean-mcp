@@ -44,6 +44,13 @@ Claude Desktop also installs the `.mcpb` bundle attached to each GitHub release.
 
 Limits (set by environment variables): `DATACLEAN_MAX_BYTES` (20 MB), `DATACLEAN_MAX_ROWS` (200,000), `DATACLEAN_MAX_OUTPUT` (15 MB). Credit prices can be overridden with `DATACLEAN_PRICES=clean_table=2,...`.
 
+## Visual cards (MCP Apps)
+
+In Claude, ChatGPT, VS Code and Goose every paid tool and `credits_balance` renders as an interactive card in the
+chat: credit balance with a refill bar and a buy button, or a result summary (key figures, issues, table preview and
+credits charged). It is the `ui://dataclean/card.html` resource, self-contained with no network access. Other clients
+keep getting the same JSON as before.
+
 ## Tests
 
 ```bash

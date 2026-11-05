@@ -23,6 +23,7 @@ from mcp.types import ToolAnnotations
 from . import __version__, schema as S, tables as T
 from . import clean as C
 from . import values as V
+from . import apps
 from .billing import Billing
 from .regexguard import RegexError
 
@@ -67,6 +68,11 @@ mcp = MCPServer(
     ),
 )
 
+
+UI = apps.ui_meta("dataclean")
+apps.register(mcp, slug="dataclean", name="DataClean", icon="table", version=__version__, lang="en",
+              buy_url=lambda: billing.checkout_url,
+              labels={"profile_table": "Table profile", "clean_table": "Clean table", "validate_schema": "Schema check", "normalize_values": "Normalized values", "credits_balance": "Credit balance"})
 
 @contextmanager
 def _user_errors() -> Iterator[None]:
@@ -134,7 +140,7 @@ def _table_doc(fn: Any) -> Any:
     return fn
 
 
-@mcp.tool(annotations=LOCAL)
+@mcp.tool(annotations=LOCAL, meta=UI)
 @_table_doc
 async def profile_table(ctx: Context, content: str = "", content_base64: str = "", rows: list[Any] | None = None,
                         delimiter: str = "", sheet: str = "", has_header: bool = True, header_row: int = 0,
@@ -162,7 +168,7 @@ async def profile_table(ctx: Context, content: str = "", content_base64: str = "
             "billing": _note(receipt, PRICES["profile_table"])}
 
 
-@mcp.tool(annotations=LOCAL)
+@mcp.tool(annotations=LOCAL, meta=UI)
 @_table_doc
 async def clean_table(ctx: Context, content: str = "", content_base64: str = "", rows: list[Any] | None = None,
                       output_format: str = "csv", delimiter: str = "", sheet: str = "", has_header: bool = True,
@@ -275,7 +281,7 @@ def _clean(t: T.Table, opts: C.Options, fmt: str, header_style: str, dedupe: str
     return result
 
 
-@mcp.tool(annotations=LOCAL)
+@mcp.tool(annotations=LOCAL, meta=UI)
 @_table_doc
 async def validate_schema(ctx: Context, schema: dict[str, Any], content: str = "", content_base64: str = "",
                           rows: list[Any] | None = None, delimiter: str = "", sheet: str = "",
@@ -308,7 +314,7 @@ async def validate_schema(ctx: Context, schema: dict[str, Any], content: str = "
     return {"source": _source(t), **res, "billing": _note(receipt, PRICES["validate_schema"])}
 
 
-@mcp.tool(annotations=LOCAL)
+@mcp.tool(annotations=LOCAL, meta=UI)
 async def normalize_values(ctx: Context, values: list[Any], kind: str = "auto", number_locale: str = "",
                            date_order: str = "", phone_country: str = "", name: str = "") -> dict[str, Any]:
     """Normalize a list of up to 10,000 values of one kind, e.g. amounts, dates or phone numbers from a document.
@@ -355,7 +361,7 @@ def pricing() -> dict[str, Any]:
             "buy_credits": billing.checkout_url or "Set KEYFLINT_CHECKOUT_URL"}
 
 
-@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
+@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False), meta=UI)
 async def credits_balance(ctx: Context) -> dict[str, Any]:
     """Remaining credits on your KeyFlint license. Free."""
     return await billing.balance(_headers(ctx))
