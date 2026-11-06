@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ArceeDev/dataclean-mcp",
+  "title": "DataClean",
+  "description": "Profile, clean and validate CSV/Excel data: schemas, dates, numbers, duplicates. Never guesses.",
+  "version": "0.2.0",
+  "websiteUrl": "https://mcp.keyflint.dev",
+  "repository": {
+    "url": "https://github.com/ArceeDev/dataclean-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "dataclean-mcp",
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "KEYFLINT_LICENSE",
+          "description": "Your KeyFlint license (LIC-...). Get one, free trial included, at https://mcp.keyflint.dev",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.keyflint.dev/dataclean/mcp"
+    }
+  ]
+}

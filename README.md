@@ -1,5 +1,7 @@
 # dataclean-mcp
 
+<!-- mcp-name: io.github.ArceeDev/dataclean-mcp -->
+
 An MCP server that cleans tables **deterministically** before an AI agent reasons over them. LLMs misread `1.250,50 €`, swap day and month in `03/04/2026`, choke on NUL bytes and mojibake (`CafÃ©`), and silently drop leading zeros. DataClean fixes these with rules, and it never guesses: an ambiguous value is kept as it was and flagged, and it is converted only when the rest of its column (or a parameter you pass) settles its meaning.
 
 | Tool | Credits | What it does |
