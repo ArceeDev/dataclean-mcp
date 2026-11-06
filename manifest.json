@@ -3,7 +3,7 @@
   "manifest_version": "0.4",
   "name": "dataclean-mcp",
   "display_name": "DataClean",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Cleans CSV, Excel and JSON tables deterministically: European/US numbers, day/month dates, NUL bytes, mojibake, phones, emails, dedupe and schema validation.",
   "long_description": "Data hygiene for AI agents. Profiles a table (types, number locale, date order, nulls, duplicates, problems), returns a clean typed copy as CSV, JSON or .xlsx, validates rows against a schema and normalizes lists of values. Ambiguous values are flagged, never guessed. Pay per call with KeyFlint credits.",
   "author": {
