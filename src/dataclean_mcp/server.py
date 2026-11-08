@@ -140,7 +140,7 @@ def _table_doc(fn: Any) -> Any:
     return fn
 
 
-@mcp.tool(annotations=LOCAL, meta=UI)
+@mcp.tool(title="Profile table data quality", annotations=LOCAL, meta=UI)
 @_table_doc
 async def profile_table(ctx: Context, content: str = "", content_base64: str = "", rows: list[Any] | None = None,
                         delimiter: str = "", sheet: str = "", has_header: bool = True, header_row: int = 0,
@@ -168,7 +168,7 @@ async def profile_table(ctx: Context, content: str = "", content_base64: str = "
             "billing": _note(receipt, PRICES["profile_table"])}
 
 
-@mcp.tool(annotations=LOCAL, meta=UI)
+@mcp.tool(title="Clean and standardize table", annotations=LOCAL, meta=UI)
 @_table_doc
 async def clean_table(ctx: Context, content: str = "", content_base64: str = "", rows: list[Any] | None = None,
                       output_format: str = "csv", delimiter: str = "", sheet: str = "", has_header: bool = True,
@@ -281,7 +281,7 @@ def _clean(t: T.Table, opts: C.Options, fmt: str, header_style: str, dedupe: str
     return result
 
 
-@mcp.tool(annotations=LOCAL, meta=UI)
+@mcp.tool(title="Validate table against schema", annotations=LOCAL, meta=UI)
 @_table_doc
 async def validate_schema(ctx: Context, schema: dict[str, Any], content: str = "", content_base64: str = "",
                           rows: list[Any] | None = None, delimiter: str = "", sheet: str = "",
@@ -314,7 +314,7 @@ async def validate_schema(ctx: Context, schema: dict[str, Any], content: str = "
     return {"source": _source(t), **res, "billing": _note(receipt, PRICES["validate_schema"])}
 
 
-@mcp.tool(annotations=LOCAL, meta=UI)
+@mcp.tool(title="Normalize values", annotations=LOCAL, meta=UI)
 async def normalize_values(ctx: Context, values: list[Any], kind: str = "auto", number_locale: str = "",
                            date_order: str = "", phone_country: str = "", name: str = "") -> dict[str, Any]:
     """Normalize a list of up to 10,000 values of one kind, e.g. amounts, dates or phone numbers from a document.
@@ -353,7 +353,7 @@ async def normalize_values(ctx: Context, values: list[Any], kind: str = "auto", 
             "billing": _note(receipt, PRICES["normalize_values"])}
 
 
-@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
+@mcp.tool(title="Show tool prices", annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False))
 def pricing() -> dict[str, Any]:
     """Credit price of each tool and where to buy credits. Free."""
     return {"credits_per_call": PRICES, "limits": {"bytes": MAX_BYTES, "rows": MAX_ROWS, "values": MAX_VALUES},
@@ -361,7 +361,7 @@ def pricing() -> dict[str, Any]:
             "buy_credits": billing.checkout_url or "Set KEYFLINT_CHECKOUT_URL"}
 
 
-@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False), meta=UI)
+@mcp.tool(title="Check credit balance", annotations=ToolAnnotations(readOnlyHint=True, openWorldHint=False), meta=UI)
 async def credits_balance(ctx: Context) -> dict[str, Any]:
     """Remaining credits on your KeyFlint license. Free."""
     return await billing.balance(_headers(ctx))
