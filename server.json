@@ -3,7 +3,7 @@
   "name": "io.github.ArceeDev/dataclean-mcp",
   "title": "DataClean",
   "description": "Profile, clean and validate CSV/Excel data: schemas, dates, numbers, duplicates. Never guesses.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "websiteUrl": "https://mcp.keyflint.dev",
   "repository": {
     "url": "https://github.com/ArceeDev/dataclean-mcp",
@@ -14,7 +14,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "dataclean-mcp",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "transport": {
         "type": "stdio"
       },

@@ -133,6 +133,7 @@ async def test_bad_input_is_free(server):
 async def test_paywall_when_out_of_credits(gateway, monkeypatch):
     lic = gateway["issue"](tier="community")
     _env(monkeypatch, gateway, lic["license_key"])
+    monkeypatch.setattr(importlib.import_module("dataclean_mcp.billing"), "DEDUP_TTL", 0.0)  # distinct calls
     import dataclean_mcp.server as srv
 
     srv = importlib.reload(srv)
@@ -148,3 +149,48 @@ async def test_paywall_when_out_of_credits(gateway, monkeypatch):
 async def test_pricing_is_free(server):
     err, data, _ = await call(server, "pricing")
     assert not err and data["credits_per_call"]["clean_table"] == 1
+
+
+
+async def test_duplicate_call_same_inputs_charges_once(server):
+    """A client retry (same tool, same inputs) inside the dedupe window replays the debit."""
+    price = server.PRICES["profile_table"]
+    before = await balance(server)
+    args = dict(content=MESSY, phone_country="ES")
+    err1, first, t1 = await call(server, "profile_table", **args)
+    err2, second, t2 = await call(server, "profile_table", **args)
+    assert not err1 and not err2, (t1, t2)
+    assert await balance(server) == before - price
+    err3, _, t3 = await call(server, "profile_table", **{**args, **{"phone_country": "PT"}})
+    assert not err3, t3
+    assert await balance(server) == before - 2 * price  # different inputs are a different call
+
+
+async def test_duplicate_call_after_window_is_charged(server, monkeypatch):
+    monkeypatch.setattr(importlib.import_module("dataclean_mcp.billing"), "DEDUP_TTL", 0.0)
+    price = server.PRICES["profile_table"]
+    before = await balance(server)
+    args = dict(content=MESSY, phone_country="ES")
+    for _ in range(2):
+        err, _, text = await call(server, "profile_table", **args)
+        assert not err, text
+    assert await balance(server) == before - 2 * price
+
+
+async def test_retry_after_refunded_failure_is_billed_once(server):
+    b = server.billing
+    before = await balance(server)
+    inputs = {"content": "x"}
+    with pytest.raises(RuntimeError):
+        async with b.charge(3, "profile_table", inputs=inputs):
+            raise RuntimeError("tool body failed")
+    assert await balance(server) == before  # refunded
+    async with b.charge(3, "profile_table", inputs=inputs) as receipt:
+        assert not receipt.get("is_cached")
+    assert await balance(server) == before - 3
+    # A failing replay of a paid call does not refund the paid one.
+    with pytest.raises(RuntimeError):
+        async with b.charge(3, "profile_table", inputs=inputs) as receipt:
+            assert receipt.get("is_cached")
+            raise RuntimeError("retry failed")
+    assert await balance(server) == before - 3
