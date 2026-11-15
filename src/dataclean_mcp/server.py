@@ -160,7 +160,7 @@ async def profile_table(ctx: Context, content: str = "", content_base64: str = "
     with _user_errors():
         cols, data, flags = await asyncio.to_thread(C.clean_table, t.headers, t.rows, opts)
         _, dups = C.dedupe(t.headers, data, [], False)
-    async with billing.charge(PRICES["profile_table"], "profile_table", _headers(ctx)) as receipt:
+    async with billing.charge(PRICES["profile_table"], "profile_table", _headers(ctx), inputs=locals()) as receipt:
         pass
     return {"source": _source(t), "issues": t.issues, "duplicate_rows": dups,
             "columns": [c.as_dict() for c in cols], "flags_total": len(flags), "flags": _flags(t, t.headers, flags, 50),
@@ -209,7 +209,7 @@ async def clean_table(ctx: Context, content: str = "", content_base64: str = "",
     with _user_errors():
         out = await asyncio.to_thread(_clean, t, opts, output_format, header_style, dedupe, dedupe_keys or [],
                                       drop_empty_columns, output_delimiter, formula_guard, columns or [])
-    async with billing.charge(PRICES["clean_table"], "clean_table", _headers(ctx)) as receipt:
+    async with billing.charge(PRICES["clean_table"], "clean_table", _headers(ctx), inputs=locals()) as receipt:
         pass
     return {**out, "billing": _note(receipt, PRICES["clean_table"])}
 
@@ -309,7 +309,7 @@ async def validate_schema(ctx: Context, schema: dict[str, Any], content: str = "
     with _user_errors():
         res = await asyncio.to_thread(S.validate, t.headers, t.rows, t.line_numbers, schema, opts,
                                       max(1, min(max_errors, 5000)))
-    async with billing.charge(PRICES["validate_schema"], "validate_schema", _headers(ctx)) as receipt:
+    async with billing.charge(PRICES["validate_schema"], "validate_schema", _headers(ctx), inputs=locals()) as receipt:
         pass
     return {"source": _source(t), **res, "billing": _note(receipt, PRICES["validate_schema"])}
 
@@ -347,7 +347,7 @@ async def normalize_values(ctx: Context, values: list[Any], kind: str = "auto", 
         elif v is None and raw not in (None, ""):
             r["reason"] = "null"
         results.append(r)
-    async with billing.charge(PRICES["normalize_values"], "normalize_values", _headers(ctx)) as receipt:
+    async with billing.charge(PRICES["normalize_values"], "normalize_values", _headers(ctx), inputs=locals()) as receipt:
         pass
     return {"kind": col.kind, "column": col.as_dict(), "results": results,
             "billing": _note(receipt, PRICES["normalize_values"])}
